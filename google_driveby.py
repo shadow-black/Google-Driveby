@@ -1,13 +1,6 @@
 import signal, requests, sqlite3, time, slack_poster
 from selenium import webdriver
 
-class TimeoutException(Exception):
-  pass
-
-def TimeoutHandler(signum, frame):
-  raise TimeoutException
-
-
 def main():
     conn = sqlite3.connect('urlscan.db')
     c = conn.cursor()
@@ -26,20 +19,11 @@ def main():
 
 def take_screenshot(url):
 
-    OriginalHandler = signal.signal(signal.SIGALRM, TimeoutHandler)
-    signal.alarm(30)
-
-    try:
-        driver = webdriver.Firefox()
-        driver.get(url)
-        time.sleep(10)
-        driver.save_screenshot('screenshot.png')
-        driver.quit()
-
-    except TimeoutException:
-        signal.alarm(0)
-        signal.signal(signal.SIGALRM, OriginalHandler)
-        return
+	driver = webdriver.Firefox()
+	driver.get(url)
+	time.sleep(10)
+	driver.save_screenshot('screenshot.png')
+	driver.quit()
 
 if __name__ == '__main__':
     main()
